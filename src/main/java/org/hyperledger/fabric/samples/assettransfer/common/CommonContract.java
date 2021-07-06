@@ -28,9 +28,9 @@ public class CommonContract implements ContractInterface {
 	 * @param context
 	 * @return Chaincode.Response
 	 */
-	@Transaction(intent = Transaction.TYPE.SUBMIT)
-	public String init(Context context) {
-		return "Chaincode say 'hi' to you";
+	@Transaction(intent = Transaction.TYPE.EVALUATE)
+	public String queryChaincode(Context context) {
+		return "commonChaincode";
 	}
 
 	/**
