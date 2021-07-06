@@ -1,0 +1,22 @@
+org/hyperledger/fabric/samples/assettransfer/common/Record.java
+ org.hyperledger.fabric.samples.assettransfer.common.Record
+org/hyperledger/fabric/samples/assettransfer/common/QueryMeta.java
+ org.hyperledger.fabric.samples.assettransfer.common.QueryMeta
+org/hyperledger/fabric/samples/assettransfer/AssetTransfer.java
+ org.hyperledger.fabric.samples.assettransfer.AssetTransfer
+ org.hyperledger.fabric.samples.assettransfer.AssetTransfer$AssetTransferErrors
+org/hyperledger/fabric/samples/assettransfer/Asset.java
+ org.hyperledger.fabric.samples.assettransfer.Asset
+org/hyperledger/fabric/samples/assettransfer/common/JSON.java
+ org.hyperledger.fabric.samples.assettransfer.common.JSON
+org/hyperledger/fabric/samples/assettransfer/Wallet.java
+ org.hyperledger.fabric.samples.assettransfer.Wallet
+org/hyperledger/fabric/samples/assettransfer/common/History.java
+ org.hyperledger.fabric.samples.assettransfer.common.History
+org/hyperledger/fabric/samples/assettransfer/common/Query.java
+ org.hyperledger.fabric.samples.assettransfer.common.Query
+org/hyperledger/fabric/samples/assettransfer/WalletOperate.java
+ org.hyperledger.fabric.samples.assettransfer.WalletOperate
+ org.hyperledger.fabric.samples.assettransfer.WalletOperate$WalletOperateErrors
+org/hyperledger/fabric/samples/assettransfer/common/CommonContract.java
+ org.hyperledger.fabric.samples.assettransfer.common.CommonContract
