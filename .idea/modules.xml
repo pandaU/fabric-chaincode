@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/chaincode-java.iml" filepath="$PROJECT_DIR$/.idea/modules/chaincode-java.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/chaincode-java.main.iml" filepath="$PROJECT_DIR$/.idea/modules/chaincode-java.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/chaincode-java.test.iml" filepath="$PROJECT_DIR$/.idea/modules/chaincode-java.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commonChaincode.iml" filepath="$PROJECT_DIR$/.idea/modules/commonChaincode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commonChaincode.main.iml" filepath="$PROJECT_DIR$/.idea/modules/commonChaincode.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commonChaincode.test.iml" filepath="$PROJECT_DIR$/.idea/modules/commonChaincode.test.iml" />
     </modules>
   </component>
 </project>

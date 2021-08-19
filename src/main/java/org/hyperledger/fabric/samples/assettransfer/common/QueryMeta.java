@@ -5,27 +5,62 @@ import org.hyperledger.fabric.contract.annotation.Property;
 
 import java.util.Objects;
 
+
 @DataType
 public class QueryMeta {
 
+	/**
+	 * Records count
+	 */
 	@Property
 	private Integer recordsCount;
 
+	/**
+	 * Bookmark
+	 */
 	@Property
 	private String bookmark;
 
+	/**
+	 * Gets records count.
+	 *
+	 * @return the records count
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public Integer getRecordsCount() {
 		return recordsCount;
 	}
 
+	/**
+	 * Sets records count.
+	 *
+	 * @param recordsCount the records count
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public void setRecordsCount(Integer recordsCount) {
 		this.recordsCount = recordsCount;
 	}
 
+	/**
+	 * Gets bookmark.
+	 *
+	 * @return the bookmark
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public String getBookmark() {
 		return bookmark;
 	}
 
+	/**
+	 * Sets bookmark.
+	 *
+	 * @param bookmark the bookmark
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public void setBookmark(String bookmark) {
 		this.bookmark = bookmark;
 	}

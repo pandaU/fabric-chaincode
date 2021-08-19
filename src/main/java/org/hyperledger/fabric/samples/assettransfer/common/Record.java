@@ -6,34 +6,75 @@ import org.hyperledger.fabric.contract.annotation.Property;
 
 import java.util.Objects;
 
+
 @DataType
 public class Record {
 
+	/**
+	 * Key
+	 */
 	@Property
 	@SerializedName(value = "Key")
 	private String key;
 
+	/**
+	 * Record
+	 */
 	@Property
 	@SerializedName(value = "Record")
 	private String record;
 
+	/**
+	 * Record
+	 *
+	 * @param key    key
+	 * @param record record
+	 */
 	public Record(String key, String record) {
 		this.key = key;
 		this.record = record;
 	}
 
+	/**
+	 * Gets key.
+	 *
+	 * @return the key
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public String getKey() {
 		return key;
 	}
 
+	/**
+	 * Sets key.
+	 *
+	 * @param key the key
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public void setKey(String key) {
 		this.key = key;
 	}
 
+	/**
+	 * Gets record.
+	 *
+	 * @return the record
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public String getRecord() {
 		return record;
 	}
 
+	/**
+	 * Sets record.
+	 *
+	 * @param record the record
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
 	public void setRecord(String record) {
 		this.record = record;
 	}
