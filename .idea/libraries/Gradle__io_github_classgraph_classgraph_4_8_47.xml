@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.classgraph:classgraph:4.8.47">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/classgraph/classgraph/4.8.47/classgraph-4.8.47.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

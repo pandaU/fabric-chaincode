@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: org.hyperledger.fabric-chaincode-java:fabric-chaincode-shim:2.2.4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hyperledger/fabric-chaincode-java/fabric-chaincode-shim/2.2.4/fabric-chaincode-shim-2.2.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

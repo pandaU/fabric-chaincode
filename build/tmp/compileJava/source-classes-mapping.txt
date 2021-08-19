@@ -1,9 +1,9 @@
-org/hyperledger/fabric/samples/assettransfer/common/JsonUtil.java
- org.hyperledger.fabric.samples.assettransfer.common.JsonUtil
 org/hyperledger/fabric/samples/assettransfer/common/Record.java
  org.hyperledger.fabric.samples.assettransfer.common.Record
 org/hyperledger/fabric/samples/assettransfer/common/QueryMeta.java
  org.hyperledger.fabric.samples.assettransfer.common.QueryMeta
+org/hyperledger/fabric/samples/assettransfer/common/JsonUtil.java
+ org.hyperledger.fabric.samples.assettransfer.common.JsonUtil
 org/hyperledger/fabric/samples/assettransfer/common/History.java
  org.hyperledger.fabric.samples.assettransfer.common.History
 org/hyperledger/fabric/samples/assettransfer/common/Query.java
