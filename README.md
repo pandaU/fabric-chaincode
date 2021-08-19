@@ -1,1 +1,1 @@
-"# fabric-chaincode" 
+通用版智能合约   默认国密版   
