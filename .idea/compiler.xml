@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.8" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="org.hyperledger.fabric.samples.commonChaincode.main" target="1.8" />
+      <module name="org.hyperledger.fabric.samples.commonChaincode.test" target="1.8" />
+      <module name="org.hyperledger.fabric.samples.gm.main" target="1.8" />
+      <module name="org.hyperledger.fabric.samples.gm.test" target="1.8" />
+      <module name="org.hyperledger.fabric.samples.gmcod.main" target="1.8" />
+      <module name="org.hyperledger.fabric.samples.gmcod.test" target="1.8" />
+      <module name="org.hyperledger.fabric.samples.gmcode.main" target="1.8" />
+      <module name="org.hyperledger.fabric.samples.gmcode.test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

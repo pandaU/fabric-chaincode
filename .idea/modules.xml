@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commonChaincode.iml" filepath="$PROJECT_DIR$/.idea/modules/commonChaincode.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commonChaincode.main.iml" filepath="$PROJECT_DIR$/.idea/modules/commonChaincode.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commonChaincode.test.iml" filepath="$PROJECT_DIR$/.idea/modules/commonChaincode.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.hyperledger.fabric.samples.gmcode.iml" filepath="$PROJECT_DIR$/.idea/modules/org.hyperledger.fabric.samples.gmcode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.hyperledger.fabric.samples.gmcode.main.iml" filepath="$PROJECT_DIR$/.idea/modules/org.hyperledger.fabric.samples.gmcode.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.hyperledger.fabric.samples.gmcode.test.iml" filepath="$PROJECT_DIR$/.idea/modules/org.hyperledger.fabric.samples.gmcode.test.iml" />
     </modules>
   </component>
 </project>

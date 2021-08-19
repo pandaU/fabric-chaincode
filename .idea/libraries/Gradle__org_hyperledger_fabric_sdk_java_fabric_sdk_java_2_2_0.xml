@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: org.hyperledger.fabric-sdk-java:fabric-sdk-java:2.2.0">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/hyperledger/fabric-sdk-java/fabric-sdk-java/2.2.0/fabric-sdk-java-2.2.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
