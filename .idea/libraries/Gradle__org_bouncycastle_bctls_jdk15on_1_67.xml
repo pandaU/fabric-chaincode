@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bouncycastle:bctls-jdk15on:1.67">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bctls-jdk15on/1.67/bctls-jdk15on-1.67.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
