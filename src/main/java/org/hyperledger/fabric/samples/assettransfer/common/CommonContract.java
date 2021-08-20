@@ -1,5 +1,6 @@
 package org.hyperledger.fabric.samples.assettransfer.common;
 
+import com.google.gson.Gson;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hyperledger.fabric.Logger;
 import org.hyperledger.fabric.contract.Context;
@@ -10,11 +11,10 @@ import org.hyperledger.fabric.protos.peer.ChaincodeShim.QueryResponseMetadata;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ledger.*;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Security;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -108,7 +108,7 @@ public class CommonContract implements ContractInterface {
 	 * @date 2021 -07-07 10:29:12
 	 */
 	@Transaction(intent = Transaction.TYPE.EVALUATE)
-	public byte[] get(Context context, String type, String key) {
+	public String get(Context context, String type, String key) {
 		log.info("CommonContract.get: type=" + type + ", key=" + key);
 		if (type == null || key == null) {
 			throw new ContractRuntimeException("Incorrect number of arguments. At least 2 [type, key, ...]");
@@ -116,7 +116,23 @@ public class CommonContract implements ContractInterface {
 		ChaincodeStub stub = context.getStub();
 		String compositeKey = getCompositeKey(stub, type, key);
 		log.info("CommonContract.get: compositeKey=" + compositeKey);
-		return stub.getState(compositeKey);
+		byte[] bytes = stub.getState(compositeKey);
+		Map<String,Object> map = new HashMap<>(16);
+		if (bytes == null || bytes.length < 1){
+			return null;
+		}
+		String strUtf8 = null;
+		try {
+			strUtf8 = new String(bytes, "utf8");
+			Gson gson = new Gson();
+			Object json = gson.fromJson(strUtf8, Object.class);
+			map.put("id",key);
+			map.put("type",type);
+			map.put("values",json);
+		} catch (UnsupportedEncodingException e) {
+			log.error("get 编码失败");
+		}
+		return JsonUtil.stringify(map);
 	}
 
 	/**
