@@ -35,6 +35,8 @@ public class CommonContract implements ContractInterface {
 	 */
 	private static final String OBJECT_TYPE = "type~key";
 
+	private static final String TABLE = "table~type";
+
 	/**
 	 * Initialize
 	 *
@@ -72,7 +74,14 @@ public class CommonContract implements ContractInterface {
 		}
 		log.info("CommonContract.create: compositeKey=" + compositeKey);
 		log.info("CommonContract.create: value=" + value);
-		stub.putStringState(compositeKey.toString(), value);
+		stub.putStringState(compositeKey, value);
+		String tableKey = getCompositeTableKey(stub,type);
+		byte[] table = stub.getState(tableKey);
+		//如果表不存在则创建表
+		if (table == null || table.length < 1){
+			String tableString = "{\"tableName\":\""+type+"\",\"type\":\""+TABLE+"\"}";
+			stub.putStringState(tableKey,tableString);
+		}
 		return Boolean.TRUE;
 	}
 
@@ -91,6 +100,17 @@ public class CommonContract implements ContractInterface {
 			throw new ContractRuntimeException("Incorrect number of arguments. At least 2 [type, key, ...]");
 		}
 		CompositeKey compositeKey = stub.createCompositeKey(OBJECT_TYPE, type, key);
+		if (compositeKey != null) {
+			return compositeKey.toString();
+		}
+		throw new ContractRuntimeException("Create compositeKey failed");
+	}
+
+	private String getCompositeTableKey(ChaincodeStub stub, String type) {
+		if (type == null) {
+			throw new ContractRuntimeException("Incorrect number of arguments. At least 1 [type, key, ...]");
+		}
+		CompositeKey compositeKey = stub.createCompositeKey(TABLE, type);
 		if (compositeKey != null) {
 			return compositeKey.toString();
 		}
@@ -154,6 +174,10 @@ public class CommonContract implements ContractInterface {
 		}
 		ChaincodeStub stub = context.getStub();
 		String compositeKey = getCompositeKey(stub, type, key);
+		byte[] resp = stub.getState(compositeKey);
+		if (resp == null){
+			return Boolean.FALSE;
+		}
 		stub.delState(compositeKey);
 		if (value == null) {
 			return Boolean.FALSE;
