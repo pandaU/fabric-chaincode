@@ -78,4 +78,6 @@ sourceSets {
 //
 //check.dependsOn jacocoTestCoverageVerification
 //installDist.dependsOn check
-
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
