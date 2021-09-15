@@ -1,7 +1,6 @@
 package org.hyperledger.fabric.samples.assettransfer.common;
 
 import com.google.gson.Gson;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hyperledger.fabric.Logger;
 import org.hyperledger.fabric.contract.Context;
 import org.hyperledger.fabric.contract.ContractInterface;
@@ -12,14 +11,27 @@ import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ledger.*;
 
 import java.io.UnsupportedEncodingException;
-import java.security.Security;
 import java.time.Instant;
 import java.util.*;
 
+
+
 /**
+ * 智能合约概述，极其重要
  * <p>
- * The type Common contract.
- *  @Contract @Default  ContractInterface
+ * 定义一个智能合约，合约的名字在部署时定义，因此和类名（CommonContract）并没有关系，拿到此程序后不用修改
+ *
+ * 类中的关键词 type 代表 CouchDB（类似 MongoDB） 的一个数据库表名，一般来说一个项目对应一个智能合约，一个智能合约对应一张表
+ * 因此，type 建议用 项目简码+项目特征值 进行区分，如长沙市一站式平台的 type 为 osmp_css
+ * <p>不推荐将一个智能合约的数据存储到多张表中，会导致查询语句非常复杂
+ *
+ * 名词解释
+ * ContractInterface ： 智能合约定义接口，实现该接口即能将普通代码定义为智能合约
+ * @Transaction 交易注解，使用在方法上，将其定义为交易方法
+ * @Transaction(intent = Transaction.TYPE.EVALUATE) 代表交易查询方法
+ * @Transaction(intent = Transaction.TYPE.SUBMIT)代表交易上链方法
+ * stub.createCompositeKey(OBJECT_TYPE, type, key) 生成联合主键，主要做数据的逻辑隔离，数据的CRUD需要通过该主键进行
+ * <p>
  * @author XieXiongXiong
  * @date 2021 -07-07
  */
@@ -52,14 +64,18 @@ public class CommonContract implements ContractInterface {
 
 	/**
 	 * Create new object with type, key and value.
-	 * 新增接口
-	 * @param context the context
-	 * @param type    the type
-	 * @param key     the key
-	 * @param value   the value
+	 * 在区块链上新增一条数据
+	 * @param context the context 智能合约上下文，需要定义在每一个方法的首参数，主要能进行数据查询，上链，事件，权限等操作，业务方无需关注
+	 * @param type    the type 表名，合约数据存储到 CouchDB （类似 MongoDB）中的数据库表名，一般来说一个智能合约对应一张表，如用户信息智能合约存储到 user 表，不推荐一个智能合约的数据存储到多张表中，会导致查询语句非常复杂。
+	 * @param key     the key 数据表中记录的唯一标识，如用户信息表中的 user_id
+	 * @param value   the value 一条格式为 json String 的记录信息，一定要有 id 属性。 如用户信息，如 {"id":"10001","username":"张三","sex":"男","age":18}
 	 * @return Chaincode.Response boolean
 	 * @author XieXiongXiong
 	 * @date 2021 -07-07 10:29:12
+	 * <p>
+	 * 对应 Fabric 命令行的调用示例：peer chaincode invoke -o localhost:7050 -C mychannel -n basic -c '{"function":"create","Args":["user","10001","{\"username\":\"pandau\"}"]}'
+	 * 其中 -c 表示调用参数 function 指定调用智能合约中的 create 方法，
+	 * Args 代表参数，"user" 方法中 type 值，"10001" 方法中的 key 值， "{\"username\":\"pandau\"}" 方法中的 value 值
 	 */
 	@Transaction(intent = Transaction.TYPE.SUBMIT)
 	public Boolean create(Context context, String type, String key, String value) {
@@ -67,11 +83,13 @@ public class CommonContract implements ContractInterface {
 		if (type == null || key == null) {
 			throw new ContractRuntimeException("Incorrect number of arguments. Expecting 3 [type, key, value]");
 		}
+
 		ChaincodeStub stub = context.getStub();
 		String compositeKey = getCompositeKey(stub, type, key);
 		if (value == null) {
 			return Boolean.FALSE;
 		}
+
 		log.info("CommonContract.create: compositeKey=" + compositeKey);
 		log.info("CommonContract.create: value=" + value);
 		stub.putStringState(compositeKey, value);
@@ -82,50 +100,21 @@ public class CommonContract implements ContractInterface {
 			String tableString = "{\"tableName\":\""+type+"\",\"type\":\""+TABLE+"\"}";
 			stub.putStringState(tableKey,tableString);
 		}
+
 		return Boolean.TRUE;
 	}
 
 	/**
-	 * Gets composite key.
-	 * 新建组合key
-	 * @param stub the stub
-	 * @param type the type
-	 * @param key  the key
-	 * @return the composite key
+	 * Create new object with type, key and value.
+	 * 在区块链上加载一条数据，如果不存在 键为 key 值的数据则返回 null
+	 * @param context the context 智能合约上下文，需要定义在每一个方法的首参数，主要能进行数据查询，上链，事件，权限等操作，业务方无需关注
+	 * @param type    the type 表名，合约数据存储到 CouchDB （类似 MongoDB）中的数据库表名，一般来说一个智能合约对应一张表，如用户信息智能合约存储到 user 表，不推荐一个智能合约的数据存储到多张表中，会导致查询语句非常复杂。
+	 * @param key     the key 数据表中记录的唯一标识，如用户信息表中的 user_id 如 10001
+	 * @return Chaincode.Response String
 	 * @author XieXiongXiong
 	 * @date 2021 -07-07 10:29:12
-	 */
-	private String getCompositeKey(ChaincodeStub stub, String type, String key) {
-		if (type == null || key == null) {
-			throw new ContractRuntimeException("Incorrect number of arguments. At least 2 [type, key, ...]");
-		}
-		CompositeKey compositeKey = stub.createCompositeKey(OBJECT_TYPE, type, key);
-		if (compositeKey != null) {
-			return compositeKey.toString();
-		}
-		throw new ContractRuntimeException("Create compositeKey failed");
-	}
-
-	private String getCompositeTableKey(ChaincodeStub stub, String type) {
-		if (type == null) {
-			throw new ContractRuntimeException("Incorrect number of arguments. At least 1 [type, key, ...]");
-		}
-		CompositeKey compositeKey = stub.createCompositeKey(TABLE, type);
-		if (compositeKey != null) {
-			return compositeKey.toString();
-		}
-		throw new ContractRuntimeException("Create compositeKey failed");
-	}
-
-	/**
-	 * Get object with [type, key]
-	 * 通过组合key 查询记录
-	 * @param context the context
-	 * @param type    the type
-	 * @param key     the key
-	 * @return Chaincode.Response byte [ ]
-	 * @author XieXiongXiong
-	 * @date 2021 -07-07 10:29:12
+	 * <p>
+	 * 对应 Fabric 命令行的调用示例：peer chaincode query -C mychannel -n basic -c '{"function":"get","Args":["user","10001"]}'
 	 */
 	@Transaction(intent = Transaction.TYPE.EVALUATE)
 	public String get(Context context, String type, String key) {
@@ -133,6 +122,7 @@ public class CommonContract implements ContractInterface {
 		if (type == null || key == null) {
 			throw new ContractRuntimeException("Incorrect number of arguments. At least 2 [type, key, ...]");
 		}
+
 		ChaincodeStub stub = context.getStub();
 		String compositeKey = getCompositeKey(stub, type, key);
 		log.info("CommonContract.get: compositeKey=" + compositeKey);
@@ -156,15 +146,17 @@ public class CommonContract implements ContractInterface {
 	}
 
 	/**
-	 * Update object with [type, key, value]
-	 * 更新接口
-	 * @param context the context
-	 * @param type    the type
-	 * @param key     the key
-	 * @param value   the value
+	 * Create new object with type, key and value.
+	 * 在区块链上新增一条数据更新记录，该操作会更新世界状态库的记录
+	 * @param context the context 智能合约上下文，需要定义在每一个方法的首参数，主要能进行数据查询，上链，事件，权限等操作，业务方无需关注
+	 * @param type    the type 表名，合约数据存储到 CouchDB （类似 MongoDB）中的数据库表名，一般来说一个智能合约对应一张表，如用户信息智能合约存储到 user 表。
+	 * @param key     the key 数据表中记录的唯一标识，如用户信息表中的 user_id
+	 * @param value   the value 一条格式为 json String 的记录信息，一定要有 id 属性。 如用户信息，如 {"id":"10001","username":"张三","sex":"男","age":18}
 	 * @return Chaincode.Response boolean
 	 * @author XieXiongXiong
 	 * @date 2021 -07-07 10:29:12
+	 * <p>
+	 * 对应 Fabric 命令行的调用示例：peer chaincode invoke -o localhost:7050 -C mychannel -n basic -c '{"function":"update","Args":["user","10001","{\"username\":\"pandau\"}"]}'
 	 */
 	@Transaction(intent = Transaction.TYPE.SUBMIT)
 	public Boolean update(Context context, String type, String key, String value) {
@@ -187,14 +179,16 @@ public class CommonContract implements ContractInterface {
 	}
 
 	/**
-	 * Delete objects
-	 * 删除接口
-	 * @param context the context
-	 * @param type    the type
-	 * @param key     the key
+	 * Create new object with type, key and value.
+	 * 在区块链上新增一条数据删除记录，该操作的目的是为了将一条数据标记为删除
+	 * @param context the context 智能合约上下文，需要定义在每一个方法的首参数，主要能进行数据查询，上链，事件，权限等操作，业务方无需关注
+	 * @param type    the type 表名，合约数据存储到 CouchDB （类似 MongoDB）中的数据库表名，一般来说一个智能合约对应一张表，如用户信息智能合约存储到 user 表，不推荐一个智能合约的数据存储到多张表中，会导致查询语句非常复杂。
+	 * @param key     the key 数据表中记录的唯一标识，如用户信息表中的 user_id 如 10001
 	 * @return Chaincode.Response boolean
 	 * @author XieXiongXiong
 	 * @date 2021 -07-07 10:29:12
+	 * <p>
+	 * 对应 Fabric 命令行的调用示例：peer chaincode invoke -o localhost:7050 -C mychannel -n basic -c '{"function":"delete","Args":["user","10001"]}'
 	 */
 	@Transaction(intent = Transaction.TYPE.SUBMIT)
 	public Boolean delete(Context context, String type, String key) {
@@ -209,46 +203,32 @@ public class CommonContract implements ContractInterface {
 
 	}
 
-	/**
-	 * List all
-	 * 范围列表查询（废弃）
-	 * @param context  the context
-	 * @param startKey the start key
-	 * @param endKey   the end key
-	 * @return Records record [ ]
-	 * @author XieXiongXiong
-	 * @date 2021 -07-07 10:29:12
-	 */
-	@Deprecated
-	@Transaction(intent = Transaction.TYPE.EVALUATE)
-	public Record[] list(Context context, String startKey, String endKey) {
-		log.info("CommonContract.list: startKey=" + startKey + ", endKey=" + endKey);
-		if (startKey == null) {
-			startKey = "";
-		}
-		if (endKey == null) {
-			endKey = "";
-		}
-		ChaincodeStub stub = context.getStub();
-		List<Record> records = new ArrayList<Record>();
-		QueryResultsIterator<KeyValue> stateByRange = stub.getStateByRange(startKey, endKey);
-		stateByRange.forEach(value -> {
-			records.add(new Record(value.getKey(), value.getStringValue()));
-		});
-		log.info("CommonContract.list: " + JsonUtil.stringify(records));
-		return records.toArray(new Record[records.size()]);
-	}
 
 	/**
-	 * Query objects, support couchdb.
+	 * 按照上链 json 数据中的特殊属性进行分页查询
+	 *
+	 * 其中 mongo 查询详细资料可以查看文档 https://blog.csdn.net/weixin_34037173/article/details/91809461
 	 *
 	 * @param context  the context
-	 * @param query    the query
-	 * @param pageSize the page size
-	 * @param bookmark the bookmark
-	 * @return {@link Query}
+	 * @param query    the query  ，为 mongo 语法的 json 字符串 如查询数据中性别为男性的数据，
+	 *     {
+	 * 	     "selector": {
+	 * 	       "type":"user"
+	 * 	      }
+	 * 	    }
+	 * @param pageSize the page size ，每页的数据条数
+	 * @param bookmark the bookmark ，书签，一般数据的 hash 值，传空代表从第一条记录开始查询， {@link Query} {@link QueryMeta##bookmark}
+	 * @return {@link Query} 业务方无需关注返回结构体，SDK 已进行封装
 	 * @author XieXiongXiong
 	 * @date 2021 -07-07 10:29:13
+	 * <p>
+	 * 对应 Fabric 命令行的调用示例：peer chaincode query -C mychannel -n basic -c '{"function":"query","Args":["
+	 * {
+	 * \"selector\": {
+	 *  \"type\":\"user\"
+	 *  }
+	 *  }
+	 * ","10",""]}'
 	 */
 	@Transaction(intent = Transaction.TYPE.EVALUATE)
 	public Query query(Context context, String query, Integer pageSize, String bookmark) {
@@ -292,7 +272,7 @@ public class CommonContract implements ContractInterface {
 
 	/**
 	 * Get count of object [query]
-	 *
+	 * 按照上链 json 数据中的特殊属性进行记录数统计
 	 * @param context the context
 	 * @param query   the query
 	 * @return the count of query
@@ -324,7 +304,7 @@ public class CommonContract implements ContractInterface {
 
 	/**
 	 * Check exists for query
-	 * 是否存在
+	 * 按照上链 json 数据中的特殊属性查询记录是否存在
 	 * @param context the context
 	 * @param query   the query
 	 * @return boolean boolean
@@ -351,14 +331,16 @@ public class CommonContract implements ContractInterface {
 	}
 
 	/**
-	 * Get History of object [type, key]
-	 * 通过组合key 进行记录溯源
-	 * @param context the context
-	 * @param type    the type
-	 * @param key     the key
-	 * @return Chaincode.Response history [ ]
+	 * Create new object with type, key and value.
+	 * 在区块链上加载一条数据的所有历史记录
+	 * @param context the context 智能合约上下文，需要定义在每一个方法的首参数，主要能进行数据查询，上链，事件，权限等操作，业务方无需关注
+	 * @param type    the type 表名，合约数据存储到 CouchDB （类似 MongoDB）中的数据库表名，一般来说一个智能合约对应一张表，如用户信息智能合约存储到 user 表，不推荐一个智能合约的数据存储到多张表中，会导致查询语句非常复杂。
+	 * @param key     the key 数据表中记录的唯一标识，如用户信息表中的 user_id 如 10001
+	 * @return Chaincode.Response String
 	 * @author XieXiongXiong
-	 * @date 2021 -07-07 10:29:13
+	 * @date 2021 -07-07 10:29:12
+	 * <p>
+	 * 对应 Fabric 命令行的调用示例：peer chaincode query -C mychannel -n basic -c '{"function":"history","Args":["user","10001"]}'
 	 */
 	@Transaction(intent = Transaction.TYPE.EVALUATE)
 	public History[] history(Context context, String type, String key) {
@@ -384,5 +366,37 @@ public class CommonContract implements ContractInterface {
 		}
 		log.info("CommonContract.history: " + JsonUtil.stringify(histories));
 		return histories.toArray(new History[histories.size()]);
+	}
+
+	/**
+	 * Gets composite key.
+	 * 新建组合key
+	 * @param stub the stub
+	 * @param type the type
+	 * @param key  the key
+	 * @return the composite key
+	 * @author XieXiongXiong
+	 * @date 2021 -07-07 10:29:12
+	 */
+	private String getCompositeKey(ChaincodeStub stub, String type, String key) {
+		if (type == null || key == null) {
+			throw new ContractRuntimeException("Incorrect number of arguments. At least 2 [type, key, ...]");
+		}
+		CompositeKey compositeKey = stub.createCompositeKey(OBJECT_TYPE, type, key);
+		if (compositeKey != null) {
+			return compositeKey.toString();
+		}
+		throw new ContractRuntimeException("Create compositeKey failed");
+	}
+
+	private String getCompositeTableKey(ChaincodeStub stub, String type) {
+		if (type == null) {
+			throw new ContractRuntimeException("Incorrect number of arguments. At least 1 [type, key, ...]");
+		}
+		CompositeKey compositeKey = stub.createCompositeKey(TABLE, type);
+		if (compositeKey != null) {
+			return compositeKey.toString();
+		}
+		throw new ContractRuntimeException("Create compositeKey failed");
 	}
 }

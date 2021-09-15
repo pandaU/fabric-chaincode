@@ -6,6 +6,13 @@ import org.hyperledger.fabric.contract.annotation.Property;
 import java.util.Objects;
 
 
+/**
+ * <p>
+ * The type Query meta.
+ *
+ * @author XieXiongXiong
+ * @date 2021 -09-15
+ */
 @DataType
 public class QueryMeta {
 

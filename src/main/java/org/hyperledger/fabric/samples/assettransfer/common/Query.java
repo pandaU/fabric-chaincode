@@ -7,6 +7,13 @@ import java.util.Arrays;
 import java.util.Objects;
 
 
+/**
+ * <p>
+ * The type Query.
+ *
+ * @author XieXiongXiong
+ * @date 2021 -09-15
+ */
 @DataType
 public class Query {
 

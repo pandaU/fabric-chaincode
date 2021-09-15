@@ -5,6 +5,13 @@ import org.hyperledger.fabric.contract.annotation.Property;
 
 import java.util.Objects;
 
+/**
+ * <p>
+ * The type History.
+ *
+ * @author XieXiongXiong
+ * @date 2021 -09-15
+ */
 @DataType
 public class History {
 
@@ -146,5 +153,4 @@ public class History {
 		return this.getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " [txId=" + txId
 				+ ", timestamp=" + timestamp + ", isDelete=" + isDelete + ", value=" + value + "]";
 	}
-
 }
